@@ -1,6 +1,6 @@
 # Galeria
 
-[Google Classroom](https://classroom.google.com/u/1/c/MTU4ODM4Mjg4NTk1/a/MjAxNzU0NDc5MDQ5/details).
+[Google Classroom](https://classroom.google.com/c/MTU4ODM4Mjg4NTk1/a/MjAxNzU0NDc5MDQ5/details).
 
 Utwórz "galerię zdjęć" o cechach:
 
