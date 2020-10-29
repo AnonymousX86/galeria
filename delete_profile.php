@@ -48,6 +48,11 @@ elseif ($_SESSION["invalid_password"] == FALSE)
         <div class="col-12">
             <h1>Galeria</h1>
         </div>
+        <div class="col-12 mb-2">
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/Cztef0-dsD0?autoplay=1"></iframe>
+            </div>
+        </div>
         <div class="col-12">
             <form
                 action="delete_profile.php"
