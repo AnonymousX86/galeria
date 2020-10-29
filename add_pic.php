@@ -14,10 +14,7 @@ $upload_dir = $_SERVER["DOCUMENT_ROOT"]."/pai/galeria/pictures";
 if (!exif_imagetype($tmp_name))
     $_SESSION["invalid_picture"] = TRUE;
 else {
-    require_once "connect.php";
-    $mysqli = @new mysqli($db_host, $db_user, $db_passwd, $db_database);
-    if (!$mysqli)
-        exit("Database error: " . $mysqli->connect_errno);
+    require "connect.php";
     if (move_uploaded_file($tmp_name, "$upload_dir/$hash")) {
         $sql = $mysqli->prepare('INSERT INTO `pictures` VALUES (NULL, ?, ?, ?, DEFAULT)');
         $sql->bind_param('ssi', $filename, $hash, $user_id);

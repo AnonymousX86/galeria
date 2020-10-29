@@ -4,10 +4,7 @@ $name = '';
 $picture = '';
 $can_see = FALSE;
 if (isset($_GET["picture"])) {
-    require_once "connect.php";
-    $mysqli = @new mysqli($db_host, $db_user, $db_passwd, $db_database);
-    if (!$mysqli)
-        exit("Database error: " . $mysqli->connect_errno);
+    require "connect.php";
     $sql = $mysqli->prepare('SELECT `id`, `owner_id`, `filename`, `hash` FROM `pictures` WHERE `id` = ?');
     $sql->bind_param('i', $_GET["picture"]);
     $sql->execute();

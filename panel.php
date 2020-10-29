@@ -59,10 +59,7 @@ if (!isset($_SESSION["logged_in"])) {
         <div class="col-12">
             <div class="row pictures">
                 <?php
-                require_once "connect.php";
-                $mysqli = @new mysqli($db_host, $db_user, $db_passwd, $db_database);
-                if (!$mysqli)
-                    exit("Database error: " . $mysqli->connect_errno);
+                require "connect.php";
                 $sql = $mysqli->prepare('
                     SELECT pictures.`id`, `filename`, `hash`
                     FROM pictures
@@ -156,10 +153,7 @@ if (!isset($_SESSION["logged_in"])) {
         <div class="col-12">
             <div class="row">
                 <?php
-                require_once "connect.php";
-                $mysqli = @new mysqli($db_host, $db_user, $db_passwd, $db_database);
-                if (!$mysqli)
-                    exit("Database error: " . $mysqli->connect_errno);
+                require "connect.php";
                 $sql = $mysqli->prepare('
                     SELECT id, filename, hash
                     FROM pictures INNER JOIN shares s ON pictures.id = s.picture_id

@@ -13,10 +13,7 @@ elseif ($_SESSION["invalid_password"] == FALSE)
     if(isset($_POST["confirm_password"])) {
         $confirmed = FALSE;
 
-        require_once "connect.php";
-        $mysqli = @new mysqli($db_host, $db_user, $db_passwd, $db_database);
-        if (!$mysqli)
-            exit("Database error: " . $mysqli->connect_errno);
+        require "connect.php";
         $sql = $mysqli->prepare('SELECT password FROM users WHERE id = ?');
         $sql->bind_param('i', $_SESSION["user_id"]);
         $sql->execute();

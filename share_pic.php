@@ -13,10 +13,7 @@ $_SESSION["picture_shared"] = FALSE;
 $guest_id = $_POST["guest_id"];
 $picture_id = $_POST["picture_id"];
 
-require_once "connect.php";
-$mysqli = @new mysqli($db_host, $db_user, $db_passwd, $db_database);
-if (!$mysqli)
-    exit("Database error: " . $mysqli->connect_errno);
+require "connect.php";
 
 $sql = $mysqli->prepare('SELECT id FROM users WHERE id = ?');
 $sql->bind_param('i', $guest_id);

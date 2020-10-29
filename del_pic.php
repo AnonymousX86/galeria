@@ -12,10 +12,7 @@ if (!isset($_SESSION["logged_in"])) {
 }
 $_SESSION["picture_deleted"] = FALSE;
 $picture_id = $_POST["id"];
-require_once "connect.php";
-$mysqli = @new mysqli($db_host, $db_user, $db_passwd, $db_database);
-if (!$mysqli)
-    exit("Database error: " . $mysqli->connect_errno);
+require "connect.php";
 $sql = $mysqli->prepare('SELECT `owner_id` FROM `pictures` WHERE `id` = ?');
 $sql->bind_param('i', $picture_id);
 $sql->execute();
