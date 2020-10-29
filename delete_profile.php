@@ -28,10 +28,9 @@ elseif ($_SESSION["invalid_password"] == FALSE)
             $sql->bind_param('i', $_SESSION["user_id"]);
             $sql->execute();
             $result = $sql->get_result();
-            while ($row = $result->fetch_assoc()) {
+            while ($row = $result->fetch_assoc())
                 if (!unlink($_SERVER["DOCUMENT_ROOT"] . "/pai/galeria/pictures/" . $row["hash"]))
                     exit('Unable to delete picture: ' . $row["id"]);
-            }
 
             $sql = $mysqli->prepare('DELETE FROM users WHERE id = ?');
             $sql->bind_param('i', $_SESSION["user_id"]);
