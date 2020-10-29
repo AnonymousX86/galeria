@@ -42,7 +42,7 @@ elseif ($_SESSION["invalid_password"] == FALSE)
 <head>
     <?php require_once "head.html" ?>
 </head>
-<body class="bg-light">
+<body>
 <div class="container">
     <div class="row">
         <div class="col-12">

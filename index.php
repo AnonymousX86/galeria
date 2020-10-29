@@ -12,7 +12,7 @@ if (isset($_SESSION["logged_in"]))
 <head>
     <?php require "head.html" ?>
 </head>
-<body class="bg-light">
+<body>
 <div class="container mt-2 mb-5">
     <div class="row">
         <div class="col">
