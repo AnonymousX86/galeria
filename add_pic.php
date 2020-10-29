@@ -16,7 +16,7 @@ if (!exif_imagetype($tmp_name))
 else {
     require "connect.php";
     if (move_uploaded_file($tmp_name, "$upload_dir/$hash")) {
-        $sql = $mysqli->prepare('INSERT INTO `pictures` VALUES (NULL, ?, ?, ?, DEFAULT)');
+        $sql = $mysqli->prepare('INSERT INTO `pictures` VALUES (NULL, ?, ?, ?, DEFAULT, NULL)');
         $sql->bind_param('ssi', $filename, $hash, $user_id);
         $sql->execute();
         $_SESSION["picture_uploaded"] = $sql->errno == 0;

@@ -16,23 +16,49 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `collections`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `collections` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owner_id` int(11) NOT NULL,
+  `name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `collections_users_id_fk` (`owner_id`),
+  CONSTRAINT `collections_users_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `collections`
+--
+
+LOCK TABLES `collections` WRITE;
+INSERT INTO `collections` VALUES (4,7,'Natura'),(5,7,'Awatary');
+UNLOCK TABLES;
+
+--
 -- Table structure for table `pictures`
 --
 
-DROP TABLE IF EXISTS `pictures`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pictures` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `filename` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
-  `hash` varchar(38) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `hash` varchar(38) COLLATE utf8_unicode_ci NOT NULL,
   `owner_id` int(11) NOT NULL,
   `upload_date` datetime DEFAULT current_timestamp(),
+  `collection_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `pictures_hash_uindex` (`hash`),
   KEY `pictures_users_id_fk` (`owner_id`),
+  KEY `pictures_collections_id_fk` (`collection_id`),
+  CONSTRAINT `pictures_collections_id_fk` FOREIGN KEY (`collection_id`) REFERENCES `collections` (`id`) ON DELETE CASCADE,
   CONSTRAINT `pictures_users_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,13 +66,13 @@ CREATE TABLE `pictures` (
 --
 
 LOCK TABLES `pictures` WRITE;
+INSERT INTO `pictures` VALUES (41,'Hamnoy, Norway.jpg','8d2e4a0e36c58153898ceb7eb044b63f.jpg',7,'2020-10-29 10:56:07',4),(42,'Dolomite\'s mountain.jpg','448afc2bfdcbfb5f07110c6713b7df19.jpg',7,'2020-10-29 10:58:16',4),(43,'Anubis Drawing.jpg','3d5071a5dbaad94f889b3eacbffc734c.jpg',7,'2020-10-29 11:58:45',5),(44,'Anonymous Pirate Skull.png','5d6313c0e9ae4d283ec2d4a36ad88dfd.png',7,'2020-10-29 11:58:53',5),(45,'Tyrael 3.jpg','cf5d27fa0987a2486b6d5252c374ca4c.jpg',7,'2020-10-29 12:01:21',NULL);
 UNLOCK TABLES;
 
 --
 -- Table structure for table `shares`
 --
 
-DROP TABLE IF EXISTS `shares`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `shares` (
@@ -70,7 +96,6 @@ UNLOCK TABLES;
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
@@ -79,7 +104,7 @@ CREATE TABLE `users` (
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_login_uindex` (`login`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,6 +112,7 @@ CREATE TABLE `users` (
 --
 
 LOCK TABLES `users` WRITE;
+INSERT INTO `users` VALUES (7,'qwe','$2y$10$PBG5rAKvoIbGUxdHHhkOnOfGT6Zv9ABnke.aZjV6073BXvYsA1Qre');
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -98,4 +124,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-27  9:48:37
+-- Dump completed on 2020-10-29 12:16:31

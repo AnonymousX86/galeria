@@ -29,15 +29,15 @@ if (isset($_GET["picture"])) {
         $result = $sql->get_result();
         if ($result->num_rows == 1)
             $can_see = TRUE;
+        $result->close();
     }
 
-    $result->close();
     $mysqli->close();
     if ($can_see == TRUE)
         $picture = '<img
             src="/pai/galeria/pictures/' . $hash . '"
             alt=""
-            class="rounded"
+            class="img-fluid rounded"
             />';
 }
 ?>
@@ -48,7 +48,7 @@ if (isset($_GET["picture"])) {
     <?php require_once "head.html" ?>
 </head>
 <body>
-<div class="container">
+<div class="container mt-2 mb-5">
     <div class="row">
         <div class="col-12">
             <h1>Galeria</h1>
