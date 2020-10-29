@@ -10,7 +10,7 @@ if (!isset($_SESSION["logged_in"])) {
 if (!isset($_SESSION["invalid_password"]))
     $_SESSION["invalid_password"] = FALSE;
 elseif ($_SESSION["invalid_password"] == FALSE)
-    if(isset($_POST["confirm_password"])) {
+    if (isset($_POST["confirm_password"])) {
         $confirmed = FALSE;
 
         require "connect.php";
@@ -24,11 +24,20 @@ elseif ($_SESSION["invalid_password"] == FALSE)
         $result->close();
 
         if ($confirmed == TRUE) {
+            $sql = $mysqli->prepare('SELECT id, hash FROM pictures WHERE owner_id = ?');
+            $sql->bind_param('i', $_SESSION["user_id"]);
+            $sql->execute();
+            $result = $sql->get_result();
+            while ($row = $result->fetch_assoc()) {
+                if (!unlink($_SERVER["DOCUMENT_ROOT"] . "/pai/galeria/pictures/" . $row["hash"]))
+                    exit('Unable to delete picture: ' . $row["id"]);
+            }
+
             $sql = $mysqli->prepare('DELETE FROM users WHERE id = ?');
             $sql->bind_param('i', $_SESSION["user_id"]);
             $sql->execute();
             if ($sql->affected_rows == 0)
-                exit("Unable to delete account ".$_SESSION["user_id"]);
+                exit("Unable to delete account " . $_SESSION["user_id"]);
         }
 
         $mysqli->close();
@@ -50,14 +59,15 @@ elseif ($_SESSION["invalid_password"] == FALSE)
         </div>
         <div class="col-12 mb-2">
             <div class="embed-responsive embed-responsive-16by9">
-                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/Cztef0-dsD0?autoplay=1"></iframe>
+                <iframe class="embed-responsive-item"
+                        src="https://www.youtube.com/embed/Cztef0-dsD0?autoplay=1"></iframe>
             </div>
         </div>
         <div class="col-12">
             <form
-                action="delete_profile.php"
-                method="post"
-                onsubmit="return confirm('Czy jesteś pewien, że chcesz na zawsze usunąć swoje konto wraz ze swoimi zdjęciami?')"
+                    action="delete_profile.php"
+                    method="post"
+                    onsubmit="return confirm('Czy jesteś pewien, że chcesz na zawsze usunąć swoje konto wraz ze swoimi zdjęciami?')"
             >
                 <label>
                     Potwierdź swoje hasło, <strong><?= $_SESSION["login"] ?></strong>:
