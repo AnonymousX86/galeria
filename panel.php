@@ -122,7 +122,7 @@ if (!isset($_SESSION["logged_in"])) {
                         $sql->execute();
                         $result = $sql->get_result();
                         while ($row = $result->fetch_assoc())
-                            echo "<option value='".$row["id"]."'>".$row["name"]."</option>";
+                            echo "<option value='" . $row["id"] . "'>" . $row["name"] . "</option>";
                         echo "
                                             </select>
                                         </div>
@@ -183,33 +183,61 @@ if (!isset($_SESSION["logged_in"])) {
                         echo "
                             <div class='col-4'>
                                 <img class='img-fluid rounded mb-1 w-100' src='/pai/galeria/pictures/" . htmlentities($row["hash"]) . "' alt='" . $row["name"] . "'/>
-                                <a href='del_pic_from_coll.php?picture_id=".$row["p_id"]."'><button class='btn btn-danger'>Usuń z kolekcji</button></a>
+                                <a href='del_pic_from_coll.php?picture_id=" . $row["p_id"] . "'><button class='btn btn-warning'>Usuń z kolekcji</button></a>
                             </div>";
                     $result->close();
                     echo "
                         </div>
-                            <p class='mt-3'>
-                                <a href='del_coll.php?collection_id=" . $c["id"] . "'>
-                                    <button class='btn btn-danger'>Usuń kolekcję</button>
-                                </a>
-                            </p>
+                            <div class='form-row mt-4'>
+                                <div class='col-auto'>
+                                    <a href='del_coll.php?collection_id=" . $c["id"] . "'>
+                                        <button class='btn btn-danger w-100'>Usuń kolekcję</button>
+                                    </a>
+                                </div>
+                                <form action='share_coll.php' method='post'>
+                                    <input type='hidden' name='collection_id' value='" . $c["id"] . "'/>
+                                    <div class='col-auto'>
+                                        <label for='guest_id'>ID Gościa</label>
+                                    </div>
+                                    <div class='col-auto'>
+                                        <input class='form-control w-100' type='number' name='guest_id' id='guest_id'/>
+                                    </div>
+                                    <div class='col-auto'>
+                                        <input class='btn btn-primary form-control w-100' type='submit' value='Udostępnij kolekcję'/>
+                                    </div>
+                                </form>
+                            </div>
                         </div>";
                 }
                 echo "</div>";
             }
             ?>
         </div>
-        <div class="col-12">
+        <div class="col-12 mt-2">
+            <?php
+            if (isset($_SESSION["user_id_exists"])) {
+                if ($_SESSION["user_id_exists"] == FALSE)
+                    echo "<div class='alert alert-warning'>Takie ID gościa nie istnieje</div>";
+                elseif (isset($_SESSION["collection_shared"])) {
+                    if ($_SESSION["collection_shared"] == TRUE)
+                        echo "<div class='alert alert-success'>Udostępniono kolekcję</div>";
+                    else
+                        echo "<div class='alert alert-warning'>Nie udało się udostępnić kolekcji</div>";
+                }
+            }
+            ?>
+        </div>
+        <div class="col-12 mt-2">
             <h3>Stwórz nową kolekcję</h3>
             <form action="add_coll.php" method="post">
-                <div class="row">
-                    <div class="col-6">
+                <div class="form-row">
+                    <div class="col-auto">
                         <label for="collection_name">Nazwa</label>
                     </div>
-                    <div class="col-6">
-                        <input type="text" name="collection_name" id="collection_name" required/>
+                    <div class="col-auto">
+                        <input class="form-control" type="text" name="collection_name" id="collection_name" required/>
                     </div>
-                    <div class="col-12">
+                    <div class="col-auto">
                         <input type="submit" value="Stwórz" class="btn btn-primary"/>
                     </div>
                 </div>
@@ -227,8 +255,8 @@ if (!isset($_SESSION["logged_in"])) {
                     <form action="add_pic.php" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="max_file_size" value="512000"/>
                         <input type="hidden" name="user_id" value="<?= $_SESSION["user_id"] ?>">
-                        <input type="file" name="file_uploaded" required/>
-                        <input type="submit" value="Prześlij zdjęcie" class="btn btn-primary"/>
+                        <input class="form-control-file" type="file" name="file_uploaded" required/>
+                        <input type="submit" value="Prześlij zdjęcie" class="btn btn-primary mt-2"/>
                     </form>
                 </div>
                 <div class="col-12">
@@ -294,6 +322,57 @@ if (!isset($_SESSION["logged_in"])) {
                                     </div>
                                 </div>
                             </div>";
+                ?>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+            <h2>Udostępnione kolekcje</h2>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <?php
+                require "connect.php";
+                $sql = $mysqli->prepare('
+                    SELECT id, name
+                    FROM collections INNER JOIN shares_colls s ON collections.id = s.collection_id
+                    WHERE s.user_id = ?
+                ');
+                $sql->bind_param('i', $_SESSION["user_id"]);
+                $sql->execute();
+                $result = $sql->get_result();
+                $collections = array();
+                while ($row = $result->fetch_assoc())
+                    $collections[] = array(
+                        "id" => $row["id"],
+                        "name" => $row["name"]
+                    );
+                $result->close();
+                $mysqli->close();
+                if ($collections == [])
+                    echo "<div class='col-12'>Nie posiadasz żadnych kolekcji</div>";
+                else
+                    foreach ($collections as $c) {
+                        echo "<div class='col-12'><h3>" . $c["name"] . "</h3><div class='row'>";
+                        require "connect.php";
+                        $sql = $mysqli->prepare('
+                        SELECT pictures.id as p_id, name, hash
+                        FROM pictures 
+                            INNER JOIN collections c ON pictures.collection_id = c.id 
+                        WHERE c.id = ?');
+                        $sql->bind_param('i', $c["id"]);
+                        $sql->execute();
+                        $result = $sql->get_result();
+                        while ($row = $result->fetch_assoc())
+                            echo "
+                            <div class='col-4'>
+                                <img class='img-fluid rounded mb-1 w-100' src='/pai/galeria/pictures/" . htmlentities($row["hash"]) . "' alt='" . $row["name"] . "'/>
+                            </div>";
+                        $result->close();
+                        echo "</div></div>";
+                    }
                 ?>
             </div>
         </div>

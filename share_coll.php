@@ -8,10 +8,10 @@ if (!isset($_SESSION["logged_in"])) {
     exit();
 }
 $_SESSION["user_id_exists"] = TRUE;
-$_SESSION["picture_shared"] = FALSE;
+$_SESSION["collection_shared"] = FALSE;
 
 $guest_id = $_POST["guest_id"];
-$picture_id = $_POST["picture_id"];
+$collection_id = $_POST["collection_id"];
 
 require "connect.php";
 
@@ -23,40 +23,40 @@ if ($result->num_rows == 0) {
     $_SESSION['user_id_exists'] = FALSE;
     $result->close();
     $mysqli->close();
-    header("Location: show_pic.php?picture=$picture_id");
+    header("Location: panel.php");
     exit();
 }
 
 $sql = $mysqli->prepare('
     SELECT users.id AS owner
-    FROM users INNER JOIN pictures p on users.id = p.owner_id
-    WHERE p.id = ?
+    FROM users INNER JOIN collections c on users.id = c.owner_id
+    WHERE c.id = ?
 ');
-$sql->bind_param('i', $picture_id);
+$sql->bind_param('i', $collection_id);
 $sql->execute();
 $result = $sql->get_result();
 if ($result->num_rows == 0) {
     $result->close();
     $mysqli->close();
-    exit("Unable to share picture $picture_id.");
+    exit("Unable to share picture $collection_id.");
 }
 while ($row = $result->fetch_assoc())
     $is_owner = $row["owner"] == $_SESSION["user_id"];
 $result->close();
 if ($is_owner == TRUE) {
-    $sql = $mysqli->prepare('SELECT * FROM shares WHERE user_id = ? AND picture_id = ?');
-    $sql->bind_param('ii', $guest_id, $picture_id);
+    $sql = $mysqli->prepare('SELECT * FROM shares_colls WHERE user_id = ? AND collection_id = ?');
+    $sql->bind_param('ii', $guest_id, $collection_id);
     $sql->execute();
     $result = $sql->get_result();
     if ($result->num_rows == 0) {
-        $sql = $mysqli->prepare('INSERT INTO shares VALUES (?, ?)');
-        $sql->bind_param('ii', $guest_id, $picture_id);
+        $sql = $mysqli->prepare('INSERT INTO shares_colls VALUES (?, ?)');
+        $sql->bind_param('ii', $guest_id, $collection_id);
         $sql->execute();
     }
-    $_SESSION["picture_shared"] = TRUE;
+    $_SESSION["collection_shared"] = TRUE;
     $result->close();
 }
 
 $result->close();
 $mysqli->close();
-header("Location: show_pic.php?picture=$picture_id");
+header("Location: panel.php");

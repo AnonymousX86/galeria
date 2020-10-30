@@ -13,5 +13,5 @@ Utwórz "galerię zdjęć" o cechach:
 ## Opcjonalnie
 
 - [x] zdjęcia będzie można łączyć w kolekcje z określonym tytułem
-- [ ] kolekcje tak jak i pojedyncze zdjęcie będzie można udostępnić
+- [x] kolekcje tak jak i pojedyncze zdjęcie będzie można udostępnić
 
